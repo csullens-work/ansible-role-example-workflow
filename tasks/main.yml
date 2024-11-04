@@ -1,0 +1,42 @@
+---
+# tasks file for ansible-role-example-workflow
+- name: Ensure Role knows which OS we are using
+  ansible.builtin.debug:
+    msg: "Found OS: '{{ ansible_os_family }}'"
+  when: ansible_os_family is defined
+
+- name: Fail role if OS is unknown
+  ansible.builtin.fail:
+    msg: "Failing: This ROLE requires 'ansible_os_family' to be defined. Your main script is probably set to 'gather_facts: no'"
+  when: ansible_os_family is not defined
+
+- name: Fail if text_to_display is not defined
+  ansible.builtin.fail:
+    msg: "Failing: text_to_display is not defined."
+  when: text_to_display is not defined
+
+- name: Print Role Inputs
+  block:
+    - name: Clear msg
+      ansible.builtin.set_fact:
+        msg: ""
+    - name: Add variable text_to_display to message
+      ansible.builtin.set_fact:
+        msg: "{{ msg | default('') }}text_to_display: '{{ text_to_display }}'\n"
+      when: text_to_display is defined
+    - name: Print Input Values
+      ansible.builtin.debug:
+        msg: "{{ msg.split('\n') }}"
+      when: msg is defined
+
+- name: Call Windows Script(s)
+  include_tasks: windows.yml
+  when: >
+    (ansible_os_family == "Windows") and
+    (ansible_os_family is defined)
+
+- name: Call Linux Script(s)
+  include_tasks: linux.yml
+  when: >
+    (ansible_os_family != "Windows") and
+    (ansible_os_family is defined)

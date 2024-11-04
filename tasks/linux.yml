@@ -1,0 +1,4 @@
+---
+- name: Print message
+  ansible.builtin.debug:
+    var: text_to_display
