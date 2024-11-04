@@ -9,6 +9,7 @@ Role Variables
 | Variable name     | Description                     |
 |-------------------|---------------------------------|
 | `text_to_display` | A string to display in the log. |
+
 Dependencies
 ------------
 
